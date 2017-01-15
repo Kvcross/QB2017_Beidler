@@ -1,10 +1,10 @@
 ---
 title: 'Week 1 Assignment: Basic R'
 author: 'Katie Beidler; Z620: Quantitative Biodiversity, Indiana University'
-date: '`r format(Sys.time(), ''%d %B, %Y'')`'
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 geometry: margin=2.54cm
 ---
 
@@ -51,9 +51,8 @@ In the R code chunk below, please provide the code to:
 3) set your working directory to your Week1 folder. 
 
 ```{r}
-rm(list-ls())
 getwd()
-setwd("/Users/kbeidler/GitHub/QB2017_Beidler/Week1")
+setwd("/Users/bhbeidler/GitHub/QB2017_Beidler/Week1")
 ```
 
 ## 3) USING R AS A CALCULATOR
@@ -233,7 +232,7 @@ cor2 = corr.test(meso.num, method = "pearson", adjust = "BH")
 #Nonparametric Test using Spearman’s rho test 
 cor3 = corr.test(meso.num, method = "spearman", adjust = "BH")
 
-prit(cor1, digits = 3)
+print(cor1, digits = 3)
 print(cor2, digits = 3, short = FALSE )
 print(cor3, digits = 3, short = FALSE)
 
@@ -388,9 +387,6 @@ The remaining columns of data refer to the biomass (µg/L) of different zooplank
 Total zooplankton biomass response to nutrient enrichment varied among the different zooplankton taxa. With *Chydorus* sp. significantly increasing the biomass response at the different sites (P < 0.01). *Chydorus* sp. biomass explained 96% of the variablity in total biomass response. *Simocephallus* sp. biomass was also a significant predictor of total biomass response, but to a lesser extent then *Chydorus* sp (P = 0.04). Together *Simocephallus* sp. and *Chydorus* sp biomass explained 99% of the variability in total biomass response. 
 
 ```{r}
-require("psych")
-require("corrplot")
-
 zoop = read.table("./data/zoops.txt", header = TRUE)
 # Biomass of different zooplankton taxa (sample by species matrix)
 zoop.num = zoop[, 3:11]
@@ -403,7 +399,6 @@ cor4 = cor(zoop.num)
 corrplot(cor4, method = "ellipse")
 cor5 = corr.test(zoop.num, method = "pearson", adjust = "BH")
 print(cor5, digits = 3, short = FALSE)
-
        
 # Total biomass appears to strongly positively correlated with CHYD biomass- testing to see if this relationship is significant/ linear
 fitreg.CHYD = lm(total_biomass ~ CHYD, data = zoop.num)
@@ -421,18 +416,11 @@ newCHYD = seq(min(zoop.num$CHYD), max(zoop.num$CHYD), 10)
 regline.CHYD = predict(fitreg.CHYD, newCHYD = data.frame(CHYD = newCHYD))
 abline(fitreg.CHYD, col = "red")
 
-
-# Not sure if the data is normal- seems wonky
-par(mfrow = c(2,2), mar = c(5.1, 4.1, 4.1, 2.1))
-plot(fitreg.SIMO)
-
 # Regression including both SIMO and CHYD biomass
 fitreg.taxa = lm(total_biomass ~  SIMO + CHYD, data = zoop.num)
 summary(fitreg.taxa)
 par(mfrow = c(2,2), mar = c(5.1, 4.1, 4.1, 2.1))
 plot(fitreg.taxa)
-
-
 ```
 
 ## SUBMITTING YOUR ASSIGNMENT
