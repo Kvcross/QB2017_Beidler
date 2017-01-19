@@ -1,8 +1,10 @@
 ---
-title: "Week 1 Assignment: Basic R"
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+title: 'Week 1 Assignment: Basic R'
+author: 'Katie Beidler; Z620: Quantitative Biodiversity, Indiana University'
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document: default
 geometry: margin=2.54cm
 ---
 
@@ -49,9 +51,8 @@ In the R code chunk below, please provide the code to:
 3) set your working directory to your Week1 folder. 
 
 ```{r}
-
-
-
+getwd()
+setwd("/Users/bhbeidler/GitHub/QB2017_Beidler/Week1")
 ```
 
 ## 3) USING R AS A CALCULATOR
@@ -65,10 +66,21 @@ Feel free to reference the Week 0 handout.
 4) the log (base e) of your favorite number.
 
 ```{r}
+# Cube Volume l=5
+v_cb = 5*5*5
+v_cb
+# Circle Area r=2
+a_cir = pi * 2^2
+a_cir
 
+# Length of the opposite side of a right-triangle (l) when theta = pi/4, hypotenuse = sqrt(2)
+theta = pi/4
+hyp = sqrt(2)
+l = hyp * sin(theta)
+l
 
-
-
+# the log (base e) of 22
+log(22)
 ```
 
 ## 4) WORKING WITH VECTORS
@@ -84,20 +96,20 @@ In the R code chunk below, do the following:
 3) Add `x` and `w` and divide by 15.
 
 ```{r}
-
-
-
+x = c(5, 12, 300, 19, -4)
+w = x *14
+x+w/15
 ```
-
 Now, do the following: 
 1) Create another vector (`k`) that is the same length as `w`.
 2) Multiply `k` by `x`.
 3) Use the combine function to create one more vector, `d` that consists of any three elements from `w` and any four elements of `k`.
 
 ```{r}
-
-
-
+k = c(9,3,-10,4,210)
+k*x
+d = c(w[1],w[2],w[3],k[1],k[2],k[3],k[4])
+d
 ```
 
 ### Summary Statistics of Vectors
@@ -106,19 +118,17 @@ In the R code chunk below, calculate the **summary statistics** (i.e., maximum, 
 
 ```{r}
 v <- c(16.4, 16.0, 10.1, 16.8, 20.5, NA, 20.2, 13.1, 24.8, 20.2, 25.0, 20.5, 30.5, 31.4, 27.1)
-
-
-
-
-
-
-
-
-
-
-
-
-
+max(na.omit(v))
+min(na.omit(v))
+sum(na.omit(v))
+mean(na.omit(v))
+median(na.omit(v))
+var(na.omit(v))
+sd(na.omit(v))
+sem = function(x){
+  sd(na.omit(x))/sqrt(length(na.omit(x)))
+  }
+sem(v)
 ```
 
 ## 5) WORKING WITH MATRICES
@@ -129,19 +139,16 @@ Both columns should consist of random numbers.
 Make the mean of the first column equal to 8 with a standard deviation of 2 and the mean of the second column equal to 25 with a standard deviation of 10.
 
 ```{r}
-
-
-
-
-
+c1 = c(rnorm(5), mean = 8, sd = 2)
+c2 = c(rnorm(5), mean =25, sd = 10)
+cbind(c1,c2)
 ```
 
 ***Question 1***: What does the `rnorm` function do? 
 What do the arguments in this function specify? 
 Remember to use `help()` or type `?rnorm`.
 
-> Answer 1:
-
+> Answer 1: rnorm generates a string of random numbers from a normal distribution- the output is a vector- for which you can specfy the length, mean and standard deviation
 
 In the R code chunk below, do the following: 
 1) Load `matrix.txt` from the Week1 data folder as matrix `m`.
@@ -149,16 +156,16 @@ In the R code chunk below, do the following:
 3) Determine the dimensions of the transposed matrix.
 
 ```{r}
-
-
-
+m = read.table("./data/matrix.txt")
+#transposing the matrix
+m = t(m)
+dim(m)
 ```
 
 
 ***Question 2***: What are the dimensions of the matrix you just transposed?
 
-> Answer 2:
-
+> Answer 2: The transposed matrix has 10 columns and 5 rows.
 
 ###Indexing a Matrix
 
@@ -167,14 +174,16 @@ In the R code chunk below, do the following:
 2) Remove the last row of matrix `m`.
 
 ```{r}
-
-
+m[, c(1:2,4:10)]
+#removing the last row...2 ways
+m[-5, ]
+m[-nrow(m), ]
 ```
 
 ***Question 3***: Describe what we just did in the last series of indexing steps.
 
 > ***Answer 3***:
-
+We retrieved / removed certain portions of matrix (m). In the first indexing step we eliminated column 3 and in the second step we eliminated row 5. 
 
 ## 6) BASIC DATA VISUALIZATION AND STATISTICAL ANALYSIS
 ### Load Zooplankton Dataset
@@ -184,8 +193,8 @@ In the R code chunk below, do the following:
 2) Display the structure of this data set.
 
 ```{r}
-
-
+zoops = read.table("./data/zoops.txt")
+str(zoops)
 ```
 
 ### Correlation
@@ -196,15 +205,19 @@ In the R code chunk below, do the following:
 3) Conduct a simple **Pearson's correlation** analysis.
 
 ```{r}
-
-
+meso = read.table("./data/zoop_nuts.txt", sep = "\t", header = TRUE)
+#indexing the numerical data in the 'meso' dataframe
+meso.num = meso[,3:8]
+pairs(meso.num)
+cor1 = cor(meso.num)
+cor1
 ```
 
 
 ***Question 4***: Describe some of the general features based on the visualization and correlation analysis above?
 
 > Answer 4:
-
+Total [N] appears to positively correlated with total [P], soluble reactive [P] (SRP), total inorganic nutrient concentration (TIN) and ZP. There is a strong positive correlation between TIN and total [N] (r=0.96). Correspondingly, total [P] is positively correlated with SRP, TIN and zooplankton biomass (ZP). There is a weak negative correlation between chlorophyll a concentration (CHLA) & total [P], total [N], SRP, TIN, and ZP. Overall zooplankton biomass is positively correlated with the different nutrient concentrations (TN,TP,SRP and TIN).
 
 In the R code chunk below, do the following:
 1) Redo the correlation analysis using the `corr.test()` function in the `psych` package with the following options: method = "pearson", adjust = "BH".
@@ -212,8 +225,16 @@ In the R code chunk below, do the following:
 3) Use the print command from the handout to see the results of each correlation analysis.
 
 ```{r}
+install.packages("psych", repo="http://cran.rstudio.com/")
+require("psych")
+#Parametric Test using Pearson's correlation analysis.
+cor2 = corr.test(meso.num, method = "pearson", adjust = "BH")
+#Nonparametric Test using Spearman’s rho test 
+cor3 = corr.test(meso.num, method = "spearman", adjust = "BH")
 
-
+print(cor1, digits = 3)
+print(cor2, digits = 3, short = FALSE )
+print(cor3, digits = 3, short = FALSE)
 
 ```
 
@@ -224,13 +245,14 @@ When should one use non-parametric methods instead of parametric methods?
 With the Pearson's method, is there evidence for false discovery rate due to multiple comparisons? Why is false discovery rate important?
 
 > ***Answer 5***: 
-
+The corr.test reports the probability values and confidence intervals in addition to the correlation matrix. The Corr.test shows that the negative correlations between CHLA and the other variables are not statistically significant (P > 0.05).  Values in the correlation matrix and probability values changed slightly when a non-parametric method was used. However, correlations between CHLA and the other variables remained non-significant. Non-parametric tests should be used when when the data doesn’t meet the assumptions of the parametric test, most often the assumption about normally distributed data. Multiple tests are adjusted for with Pearson's method. i.e. there is no evidence for false discovery rate due to multiple comparisons. Controlling the false discovery rate reduces the number of incorrect rejections of the null hypothesis (type 1 error)
 
 In the R code chunk below, use the `corrplot` function in the *corrplot* package to produce the ellipse correlation plot in the handout.
 
 ```{r}
-
-
+install.packages("corrplot", repos = "http://cran.rstudio.com/")
+require("corrplot")
+corrplot(cor1, method = "ellipse")
 ```
 
 ### Linear Regression
@@ -241,29 +263,44 @@ In the R code chunk below, do the following:
 3) Produce a plot of this regression analysis including the following: categorically labeled points, the predicted regression line with 95% confidence intervals, and the appropriate axis labels.
 
 ```{r}
+# Linear Regression analysis to test the relationship between TN and ZP
+fitreg = lm(ZP ~TN, data = meso)
+summary(fitreg)
 
+# Plot of Regression analysis
+plot(meso$TN, meso$ZP, ylim=c(0,10), xlim = c(500, 5000),
+     xlab = expression(paste("Total Nitrogen (", mu,"g/L)")),
+     ylab = "Zooplankton Biomass (mg/L)", las = 1)
+text(meso$TN, meso$ZP, meso$NUTS, pos = 3, cex = 0.8)
 
+# Identifying a range of x values and generating the corresponding predicted y values from our regression model 'fitreg'
+newTN = seq(min(meso$TN), max(meso$TN), 10)
+regline = predict(fitreg, newdata = data.frame(TN = newTN))
+lines(newTN, regline)
+# the line above calls the previous figure object
 
-
-
-
+# Creating and plotting the 95% confidence intervals using newTN to generate corresponding confidence intervals from our regression model
+conf95 =  predict(fitreg, newdata = data.frame(TN = newTN),
+                  interval = c("confidence"), level = 0.95, type = "response")
+matlines(newTN, conf95[, c("lwr", "upr")], type = "l", lty = 2, lwd = 1, col = "black")
 
 ```
 
 ***Question 6***: Interpret the results from the regression model
 
 > ***Answer 6***:
-
-
+Zooplankton biomass appears to increase with increasing total N concentrations. The positve linear relationship between TN and ZP is statistically significant (P < 0.01; R^2 = 0.55). Total [N] explains ~55% of the variablity in zooplankton biomass. 
 
 ***Question 7***: Explain what the `predict()` function is doing in our analyses.
 
-> ***Answer 7***:
+> ***Answer 7***: 
+The predict function is generating the predicted y values for a range of x values, from the regression model 'fitreg'
 
 Using the R code chunk below, use the code provided in the handout to determine if our data meet the assumptions of the linear regression analysis. 
 
 ```{r}
-
+par(mfrow = c(2,2), mar = c(5.1, 4.1, 4.1, 2.1))
+plot(fitreg)
 ```
 
 + Upper left: is there a random distribution of the residuals around zero (horizontal line)?
@@ -281,25 +318,43 @@ Using the R code chunk below, do the following:
 5) Use a Tukey's HSD to identify which treatments are different. 
 
 ```{r}
+NUTS = factor(meso$NUTS, levels = c('L', 'M', 'H'))
+# Calculating the means and errors for std errors for zooplankton biomass in the different nutrient treatmenst ( L = low, M = med, H = high)
+zp.means = tapply(meso$ZP, NUTS, mean)
+zp.sem = tapply(meso$ZP, NUTS, sem)
 
+# Barplot of ZP in each nutrient treatment
+bp = barplot(zp.means, ylim = c(0, round(max(meso$ZP), digits = 0)),
+             pch = 15, cex = 1.25, las = 1, cex.lab = 1.4, cex.axis = 1.25,
+             xlab = "nutrient supply",
+             ylab = "zooplankton biomass (mg/L)",
+             names.arg = c("low", "medium", "high"))
+# Adding error bars (sem)
+arrows(x0 = bp, y0 = zp.means, y1 = zp.means - zp.sem, angle = 90,
+       length=0.1, lwd = 1) 
 
+arrows(x0 = bp, y0 = zp.means, y1 = zp.means + zp.sem, angle = 90,
+       length=0.1, lwd = 1) 
 
-
-
-
-
+# ANOVA to test H0: zooplankton biomass is affected by the nutrient treatment
+fitanova = aov(ZP ~ NUTS, data = meso)
+summary(fitanova)
+TukeyHSD(fitanova)
 ```
 
 ***Question 8***: How do you interpret the ANOVA results relative to the regression results?
+
 Do you have any concerns about this analysis?
 
-> ***Answer 8***:
-
+> ***Answer 8***: 
+Zooplankton biomass varies with respect to nutrient treatment level ( P < 0.01). So the extent to which total [N] predicts ZP defends on the nutrient treatment level. The low and high nutrent treatments differ significantly (P < 0.01), in additon to the medium and high treatments (P < 0.05). Low and medium leves were not significantly different from one another (P = 0.12). To eliminate potential concerns about the suitability of this analysis, we have to check to make sure the data meets the assumptions of an anova. 
 
 Using the R code chunk below, use the diagnostic code provided in the handout to determine if our data meet the assumptions of ANVOA (similar to regression). 
 
 ```{r}
-
+# Checking on the residuals for fitanova
+par(mfrow = c(2,2), mar = c(5.1, 4.1, 4.1, 2.1))
+plot(fitanova)
 ```
 
 ## SYNTHESIS: SITE-BY-SPECIES MATRIX
@@ -328,11 +383,44 @@ The remaining columns of data refer to the biomass (µg/L) of different zooplank
 
 ***Question 9***: With the visualization and statistical tools that we learned about in the Week 1 Handout, use the site-by-species matrix to assess whether and how different zooplankton taxa were responsible for the total biomass (ZP) response to nutrient enrichment. Describe what you learned below in the "Answer" section and include appropriate code in the R chunk.
 
+> ***Answer 9***:
+Total zooplankton biomass response to nutrient enrichment varied among the different zooplankton taxa. With *Chydorus* sp. significantly increasing the biomass response at the different sites (P < 0.01). *Chydorus* sp. biomass explained 96% of the variablity in total biomass response. *Simocephallus* sp. biomass was also a significant predictor of total biomass response, but to a lesser extent then *Chydorus* sp (P = 0.04). Together *Simocephallus* sp. and *Chydorus* sp biomass explained 99% of the variability in total biomass response. 
+
 ```{r}
+zoop = read.table("./data/zoops.txt", header = TRUE)
+# Biomass of different zooplankton taxa (sample by species matrix)
+zoop.num = zoop[, 3:11]
 
+# Calculating total zooplankton biomass (µg/L) for each sample
+zoop.num$total_biomass = rowSums(zoop.num) 
 
+# Correlations among taxa with respect to total biomass response
+cor4 = cor(zoop.num)
+corrplot(cor4, method = "ellipse")
+cor5 = corr.test(zoop.num, method = "pearson", adjust = "BH")
+print(cor5, digits = 3, short = FALSE)
+       
+# Total biomass appears to strongly positively correlated with CHYD biomass- testing to see if this relationship is significant/ linear
+fitreg.CHYD = lm(total_biomass ~ CHYD, data = zoop.num)
+summary(fitreg.CHYD)
 
+# Not sure if the data is normal
+par(mfrow = c(2,2), mar = c(5.1, 4.1, 4.1, 2.1))
+plot(fitreg.CHYD)
 
+# Plot of Regression analysis
+plot(zoop.num$CHYD, zoop.num$total_biomass, ylim=c(500, 9000), xlim = c(500, 9000),
+     xlab = expression(paste("Biomass Chydorus sp (", mu,"g/L)")),
+     ylab = "Total Zooplankton Biomass for each site (micrograms/L)")
+newCHYD = seq(min(zoop.num$CHYD), max(zoop.num$CHYD), 10)
+regline.CHYD = predict(fitreg.CHYD, newCHYD = data.frame(CHYD = newCHYD))
+abline(fitreg.CHYD, col = "red")
+
+# Regression including both SIMO and CHYD biomass
+fitreg.taxa = lm(total_biomass ~  SIMO + CHYD, data = zoop.num)
+summary(fitreg.taxa)
+par(mfrow = c(2,2), mar = c(5.1, 4.1, 4.1, 2.1))
+plot(fitreg.taxa)
 ```
 
 ## SUBMITTING YOUR ASSIGNMENT

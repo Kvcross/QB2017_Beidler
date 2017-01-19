@@ -1,6 +1,6 @@
 ---
 title: "Week 1 Assignment: R Test"
-author: "Student Name"
+author: "Katie Beidler"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 ---
@@ -24,14 +24,12 @@ It is due on **January 18^th^, 2015 at Noon**.
 
     Ex. Print "*Hello, World!*"
 ```{r}
-
-
+print("Hello, World!")
 ```
 
     Now, print your own statement
 ```{r}
-
-
+print("Here we go Quant Bio!")
 ```
 
 3. Tell us about your system. Basically, just leave this part alone and it will do magic
