@@ -1,6 +1,6 @@
 ---
 title: "Assignment: Among Site (Beta) Diversity"
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+author: "Katie Beidler; Z620: Quantitative Biodiversity, Indiana University"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 geometry: margin=2.54cm
@@ -43,10 +43,17 @@ In the R code chunk below, provide the code to:
 4. load the `vegan` R package (be sure to install if needed).  
 
 ```{r}
+rm(list = ls())
+getwd() 
+setwd("/Users/kbeidler/GitHub/QB2017_Beidler/Week3-Beta")
 
-
-
-
+# Loading Required Packages
+package.list = c('vegan', 'ade4', 'viridis', 'gplots', 'BiodiversityR', 'indicspecies') 
+for (package in package.list) {
+  if (!require(package, character.only=T, quietly=T)) { install.packages(package)
+  library(package, character.only=T)
+  } 
+}
 ```
 
 ## 2) LOADING DATA
@@ -57,10 +64,10 @@ In the R code chunk below, do the following:
 2. explore the structure of the dataset.
 
 ```{r}
-
-
-
-
+data(doubs)
+str(doubs, max.level = 1)
+head(doubs$fish)
+# The fish object is the site by species matrix
 ```
 
 ***Question 1***:  Describe some of the attributes of the `doubs` dataset.  
@@ -69,9 +76,9 @@ a.  How many objects are in `doubs`?
 b.  How many fish species are there in the `doubs` dataset?
 c.  How many sites are in the `doubs` dataset?
 
-> ***Answer 1a***:  
-> ***Answer 1b***:  
-> ***Answer 1c***:  
+> ***Answer 1a***:  Doubs is a list with 4 components including: an environmental dataframe, a fish dataframe, a xy dataframe and species dataframe 
+> ***Answer 1b***:  There are 27 fish species in the `doubs` dataset.
+> ***Answer 1c***:  There are 30 sites in the `doubs` dataset.
 
 ### Visualizing the Doubs River Dataset
 
@@ -81,9 +88,9 @@ a.  How does fish richness vary along the sampled reach of the Doubs River?
 b.  How does Brown Trout (*Salmo trutta*) abundance vary along the sampled reach of the Doubs River?
 c.  What do these patterns say about the limitations of using richness when examining patterns of biodiversity?
 
-> ***Answer 2a***:  
-> ***Answer 2b***:  
-> ***Answer 2c***:  
+> ***Answer 2a***: Downstream richness values are higher compared to upstream values and there is another region of high richness towards the middle of the stream.
+> ***Answer 2b***: Brown Trout (*Salmo trutta*) abundance generally increases as you move upstream. 
+> ***Answer 2c***: While richness tended to be higher downstream, the composition of the community likely differed between upstream and downstream regions of the stream as Brown Trout abundance was highest upstrea. Therefor there are limitations associated with richness when examining patterns of biodiversity across sites, because richness may be the same among sites but species composition may differ.  
 
 ## 3) QUANTIFYING BETA-DIVERSITY
 
@@ -93,16 +100,45 @@ In the R code chunk below, do the following:
 2. use this function to analyze various aspects of $\beta$-diversity in the Doubs River.  
 
 ```{r}
+beta.w1 = function(site.by.species = ""){
+  SbyS.pa = decostand(site.by.species, method = "pa")
+  S = ncol(SbyS.pa[,which(colSums(SbyS.pa) > 0)])
+  a.bar = mean(specnumber(SbyS.pa))
+  b.w = round(S/a.bar, 3)
+  return(b.w)
+}
 
-
-
-
-
-
-
-
-
-
+# Beta diversity function that calcuates Whittaker's Beta diversity- the inpt is a sbys matrix with optional arguments 
+beta.w2 = function(site.by.species = "", sitenum1 = "", sitenum2 = "", pairwise = FALSE){
+  if (pairwise == TRUE){
+    if (sitenum1 == "" | sitenum2 == "") {
+      print("Error: please specify sites to compare") 
+      return(NA)}
+    site1 = site.by.species[sitenum1,]
+    site2 = site.by.species[sitenum2,]
+    site1 = subset(site1, select = site1 > 0)
+    site2 = subset(site2, select = site2 > 0)
+    gamma = union(colnames(site1), colnames(site2))
+    s = length(gamma)
+    a.bar = mean(c(specnumber(site1), specnumber(site2)))
+    b.w = round(s/a.bar - 1, 3)
+    return(b.w)
+  }
+  else{
+  SbyS.pa <- decostand(site.by.species, method = "pa")
+  S <- ncol(SbyS.pa[,which(colSums(SbyS.pa) > 0)])
+  a.bar <- mean(specnumber(SbyS.pa))
+  b.w <- round(S/a.bar, 3)
+  return(c(b.w,a.bar,S))
+}
+}
+# Calculating beta, average Richness at each site aka local richness, and gamma (S)
+beta.w2(doubs$fish)
+# a.bar = average richness at each site = 12.5
+# comparing site 1 to site 2 dissimilarity*
+beta.w2(doubs$fish,1,2,pairwise = TRUE)
+# comparing site 1 to site 10
+beta.w2(doubs$fish,1,10,pairwise = TRUE)
 ```
 
 ***Question 3***: Using your `beta.w()` function above, answer the following questions:
@@ -111,16 +147,16 @@ a.  Describe how local richness ($\alpha$) and turnover ($\beta$) contribute to 
 b.  Is the fish assemblage at site 1 more similar to the one at site 2 or site 10?
 c.  Using your understanding of the equation $\beta_{w} = \gamma/\alpha$, how would your interpretation of $\beta$ change if we instead defined beta additively (i.e., $\beta = \gamma - \alpha$)?
 
-> ***Answer 3a***:  
-> ***Answer 3b***:  
-> ***Answer 3c***:  
+> ***Answer 3a***: $\beta_{w} = 2.16. This index quantifies how many more times more diverse the regional species pool ($\gamma$ = 27) is than the average richness at each site within the region ($\alpha$ = 12.5 in this case). For the River Doubs ($\gamma$) fish diversity is around double ($\alpha$) fish diversity. So ($\gamma$) fish diversity is due to high richness and low turnover.
+> ***Answer 3b***: Site 1 is more similar to site 2 than site 10.
+> ***Answer 3c***: If you defined beta additively (i.e., $\beta = \gamma - \alpha$) then beta would be 14.5 and the interpretation would change from 3a. as beta and alpha would be closer in value. 
 
 ### The Resemblance Matrix
 In order to quantify $\beta$-diversity for more than two samples, we need to introduce a new primary ecological data structure: the **Resemblance Matrix**. 
 
 ***Question 4***: How do incidence- and abundance-based metrics differ in their treatment of rare species?
 
-> ***Answer 4***:  
+> ***Answer 4***: 
 
 In the R code chunk below, do the following:  
 
