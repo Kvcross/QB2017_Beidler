@@ -1,6 +1,11 @@
 ---
+<<<<<<< HEAD
 title: 'Assignment: Among Site (Beta) Diversity'
 author: 'Katie Beidler; Z620: Quantitative Biodiversity, Indiana University'
+=======
+title: "Assignment: Among Site (Beta) Diversity"
+author: "Katie Beidler; Z620: Quantitative Biodiversity, Indiana University"
+>>>>>>> origin/master
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document: default
@@ -47,16 +52,26 @@ In the R code chunk below, provide the code to:
 ```{r}
 rm(list = ls())
 getwd() 
+<<<<<<< HEAD
 setwd("/Users/beidler/downloads")
 
 # Loading Required Packages
 package.list = c('vegan', 'ade4', 'viridis', 'gplots','indicspecies') 
+=======
+setwd("/Users/kbeidler/GitHub/QB2017_Beidler/Week3-Beta")
+
+# Loading Required Packages
+package.list = c('vegan', 'ade4', 'viridis', 'gplots', 'BiodiversityR', 'indicspecies') 
+>>>>>>> origin/master
 for (package in package.list) {
   if (!require(package, character.only=T, quietly=T)) { install.packages(package)
   library(package, character.only=T)
   } 
 }
+<<<<<<< HEAD
 # I could not get the BiodiversityR package to load- I tried loading it from the source...instead I just copied the add species function from the BiodiversityR GitHub repo.
+=======
+>>>>>>> origin/master
 ```
 
 ## 2) LOADING DATA
@@ -93,7 +108,11 @@ c.  What do these patterns say about the limitations of using richness when exam
 
 > ***Answer 2a***: Downstream richness values are higher compared to upstream values and there is another region of high richness towards the middle of the stream.
 > ***Answer 2b***: Brown Trout (*Salmo trutta*) abundance generally increases as you move upstream. 
+<<<<<<< HEAD
 > ***Answer 2c***: While richness tended to be higher downstream, the composition of the community likely differed between upstream and downstream regions of the stream (many of the downstream sites did not have any Brown Trout present). Therefore there are limitations associated with richness when examining patterns of biodiversity across sites, because richness may be the same among sites but species composition may differ.  
+=======
+> ***Answer 2c***: While richness tended to be higher downstream, the composition of the community likely differed between upstream and downstream regions of the stream as Brown Trout abundance was highest upstrea. Therefor there are limitations associated with richness when examining patterns of biodiversity across sites, because richness may be the same among sites but species composition may differ.  
+>>>>>>> origin/master
 
 ## 3) QUANTIFYING BETA-DIVERSITY
 
@@ -128,17 +147,28 @@ beta.w2 = function(site.by.species = "", sitenum1 = "", sitenum2 = "", pairwise 
     return(b.w)
   }
   else{
+<<<<<<< HEAD
   SbyS.pa = decostand(site.by.species, method = "pa")
   S = ncol(SbyS.pa[,which(colSums(SbyS.pa) > 0)])
   a.bar = mean(specnumber(SbyS.pa))
   b.w = round(S/a.bar, 3)
+=======
+  SbyS.pa <- decostand(site.by.species, method = "pa")
+  S <- ncol(SbyS.pa[,which(colSums(SbyS.pa) > 0)])
+  a.bar <- mean(specnumber(SbyS.pa))
+  b.w <- round(S/a.bar, 3)
+>>>>>>> origin/master
   return(c(b.w,a.bar,S))
 }
 }
 # Calculating beta, average Richness at each site aka local richness, and gamma (S)
 beta.w2(doubs$fish)
 # a.bar = average richness at each site = 12.5
+<<<<<<< HEAD
 # Whittakers turover is how many times the species composition changes completely among the two sites
+=======
+# comparing site 1 to site 2 dissimilarity*
+>>>>>>> origin/master
 beta.w2(doubs$fish,1,2,pairwise = TRUE)
 # comparing site 1 to site 10
 beta.w2(doubs$fish,1,10,pairwise = TRUE)
@@ -152,14 +182,22 @@ c.  Using your understanding of the equation $\beta_{w} = \gamma/\alpha$, how wo
 
 > ***Answer 3a***: $\beta_{w} = 2.16. This index quantifies how many more times more diverse the regional species pool ($\gamma$ = 27) is than the average richness at each site within the region ($\alpha$ = 12.5 in this case). For the River Doubs ($\gamma$) fish diversity is around double ($\alpha$) fish diversity. So ($\gamma$) fish diversity is due to high richness and low turnover.
 > ***Answer 3b***: Site 1 is more similar to site 2 than site 10.
+<<<<<<< HEAD
 > ***Answer 3c***: If you defined beta additively (i.e., $\beta = \gamma - \alpha$) then beta would be 14.5 and the interpretation would change as beta and alpha would be closer in value than before.  
+=======
+> ***Answer 3c***: If you defined beta additively (i.e., $\beta = \gamma - \alpha$) then beta would be 14.5 and the interpretation would change from 3a. as beta and alpha would be closer in value. 
+>>>>>>> origin/master
 
 ### The Resemblance Matrix
 In order to quantify $\beta$-diversity for more than two samples, we need to introduce a new primary ecological data structure: the **Resemblance Matrix**. 
 
 ***Question 4***: How do incidence- and abundance-based metrics differ in their treatment of rare species?
 
+<<<<<<< HEAD
 > ***Answer 4***: Incidence-based similarity metrics treat abundant and  rare  species equally, whereas abundance-based metrics do not. For example, the Morisita-Horn index is influenced by abundant species. 
+=======
+> ***Answer 4***: 
+>>>>>>> origin/master
 
 In the R code chunk below, do the following:  
 
