@@ -307,7 +307,7 @@ beta.w2(doubs$fish,1,10,pairwise = TRUE)</code></pre>
 <li>Using your understanding of the equation <span class="math inline">\(\beta_{w} = \gamma/\alpha\)</span>, how would your interpretation of <span class="math inline">\(\beta\)</span> change if we instead defined beta additively (i.e., <span class="math inline">\(\beta = \gamma - \alpha\)</span>)?</li>
 </ol>
 <blockquote>
-<p><strong><em>Answer 3a</em></strong>: <span class="math inline">\(\beta_{w} = 2.16. This index quantifies how many more times more diverse the regional species pool (\)</span>$ = 27) is than the average richness at each site within the region (<span class="math inline">\(\alpha\)</span> = 12.5 in this case). For the River Doubs (<span class="math inline">\(\gamma\)</span>) fish diversity is around double (<span class="math inline">\(\alpha\)</span>) fish diversity. So (<span class="math inline">\(\gamma\)</span>) fish diversity is due to high richness and low turnover. <strong><em>Answer 3b</em></strong>: Site 1 is more similar to site 2 than site 10.</p>
+<p><strong><em>Answer 3a</em></strong>: beta = 2.16. This index quantifies how many more times more diverse the regional species pool (gamma = 27) is than the average richness at each site within the region (alpha = 12.5 in this case). For the River Doubs gamma diversity is around double alpha diversity. So gamma fish diversity is due to high richness and low turnover. <strong><em>Answer 3b</em></strong>: Site 1 is more similar to site 2 than site 10.</p>
 </blockquote>
 <blockquote>
 <p><strong><em>Answer 3c</em></strong>: If you defined beta additively (i.e., <span class="math inline">\(\beta = \gamma - \alpha\)</span>) then beta would be 14.5 and the interpretation would change as beta and alpha would be closer in value than before.</p>
@@ -524,28 +524,28 @@ fit</code></pre>
 ## ***VECTORS
 ## 
 ##          Dim1     Dim2     r2 Pr(&gt;r)    
-## Cogo -0.83884 -0.54438 0.2982  0.011 *  
-## Satr -0.99904  0.04371 0.4326  0.006 ** 
+## Cogo -0.83884 -0.54438 0.2982  0.017 *  
+## Satr -0.99904  0.04371 0.4326  0.004 ** 
 ## Phph -0.94110 -0.33813 0.7814  0.001 ***
 ## Neba -0.91413 -0.40543 0.6234  0.001 ***
-## Thth -0.87692 -0.48063 0.2634  0.018 *  
-## Teso -0.44704 -0.89452 0.1700  0.090 .  
+## Thth -0.87692 -0.48063 0.2634  0.024 *  
+## Teso -0.44704 -0.89452 0.1700  0.085 .  
 ## Chna  0.99707 -0.07644 0.4612  0.002 ** 
-## Chto  0.42032 -0.90738 0.2579  0.017 *  
-## Lele  0.33041 -0.94384 0.0495  0.529    
+## Chto  0.42032 -0.90738 0.2579  0.028 *  
+## Lele  0.33041 -0.94384 0.0495  0.528    
 ## Lece  0.06856  0.99765 0.3399  0.009 ** 
 ## Baba  0.54118 -0.84091 0.6752  0.001 ***
 ## Spbi  0.57341 -0.81927 0.4138  0.004 ** 
-## Gogo  0.97507  0.22188 0.3753  0.003 ** 
-## Eslu  0.72044 -0.69352 0.1673  0.112    
-## Pefl  0.43762 -0.89916 0.3048  0.013 *  
+## Gogo  0.97507  0.22188 0.3753  0.002 ** 
+## Eslu  0.72044 -0.69352 0.1673  0.104    
+## Pefl  0.43762 -0.89916 0.3048  0.012 *  
 ## Rham  0.72476 -0.68901 0.8301  0.001 ***
 ## Legi  0.93461 -0.35568 0.7016  0.001 ***
 ## Scer  0.98569  0.16858 0.3533  0.010 ** 
 ## Cyca  0.68181 -0.73153 0.7743  0.001 ***
-## Titi  0.64378 -0.76521 0.4586  0.001 ***
+## Titi  0.64378 -0.76521 0.4586  0.002 ** 
 ## Abbr  0.77254 -0.63497 0.7128  0.001 ***
-## Icme  0.75626 -0.65427 0.5270  0.003 ** 
+## Icme  0.75626 -0.65427 0.5270  0.002 ** 
 ## Acce  0.88799  0.45986 0.6294  0.001 ***
 ## Ruru  0.48379  0.87518 0.5177  0.002 ** 
 ## Blbj  0.95802 -0.28671 0.6766  0.001 ***
@@ -619,12 +619,12 @@ summary(indval)</code></pre>
 ## 
 ##  Group MQ  #sps.  1 
 ##       stat p.value  
-## Teso 0.686   0.023 *
+## Teso 0.686   0.026 *
 ## 
 ##  Group HQ+MQ  #sps.  2 
 ##       stat p.value   
-## Satr 0.860   0.007 **
-## Phph 0.859   0.015 * 
+## Satr 0.860   0.002 **
+## Phph 0.859   0.010 **
 ## 
 ##  Group LQ+MQ  #sps.  20 
 ##       stat p.value    
@@ -634,23 +634,23 @@ summary(indval)</code></pre>
 ## Legi 0.901   0.001 ***
 ## Baba 0.895   0.001 ***
 ## Chna 0.866   0.001 ***
-## Spbi 0.866   0.002 ** 
+## Spbi 0.866   0.001 ***
 ## Cyca 0.866   0.001 ***
-## Acce 0.866   0.001 ***
-## Lele 0.863   0.004 ** 
-## Titi 0.853   0.003 ** 
-## Chto 0.829   0.002 ** 
-## Rham 0.829   0.002 ** 
-## Anan 0.829   0.002 ** 
-## Eslu 0.827   0.026 *  
-## Pefl 0.806   0.013 *  
-## Blbj 0.791   0.004 ** 
-## Scer 0.766   0.005 ** 
-## Abbr 0.750   0.008 ** 
-## Icme 0.661   0.021 *  
+## Acce 0.866   0.002 ** 
+## Lele 0.863   0.005 ** 
+## Titi 0.853   0.008 ** 
+## Chto 0.829   0.001 ***
+## Rham 0.829   0.001 ***
+## Anan 0.829   0.001 ***
+## Eslu 0.827   0.030 *  
+## Pefl 0.806   0.018 *  
+## Blbj 0.791   0.003 ** 
+## Scer 0.766   0.004 ** 
+## Abbr 0.750   0.007 ** 
+## Icme 0.661   0.022 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-<pre class="r"><code># Habitat preferences of each species. In this case, we can calculate the phi coefficient of association. Values of the phi coefficient range from −1 (suggesting strong avoidance of a group) to 0 (suggesting no preference) to +1 (suggesting strong preference for a group).
+<pre class="r"><code># Habitat preferences of each species. In this case, we can calculate the phi coefficient of association. 
 fish.rel = decostand(fish, method = &quot;total&quot;)
 phi = multipatt(fish.rel, cluster = quality, func = &quot;r.g&quot;, control = how(nperm=999))
 summary(phi)</code></pre>
@@ -672,31 +672,31 @@ summary(phi)</code></pre>
 ##       stat p.value    
 ## Phph 0.802   0.001 ***
 ## Neba 0.734   0.001 ***
-## Satr 0.650   0.001 ***
+## Satr 0.650   0.002 ** 
 ## 
 ##  Group LQ  #sps.  2 
 ##       stat p.value    
 ## Alal 0.693   0.001 ***
-## Ruru 0.473   0.037 *  
+## Ruru 0.473   0.026 *  
 ## 
 ##  Group MQ  #sps.  4 
 ##       stat p.value   
 ## Anan 0.571   0.009 **
-## Spbi 0.557   0.009 **
-## Chto 0.542   0.014 * 
-## Icme 0.475   0.039 * 
+## Spbi 0.557   0.007 **
+## Chto 0.542   0.009 **
+## Icme 0.475   0.026 * 
 ## 
 ##  Group LQ+MQ  #sps.  9 
-##       stat p.value    
-## Legi 0.658   0.001 ***
-## Baba 0.645   0.003 ** 
-## Rham 0.600   0.006 ** 
-## Acce 0.594   0.008 ** 
-## Cyca 0.586   0.009 ** 
-## Chna 0.571   0.014 *  
-## Blbj 0.571   0.006 ** 
-## Gogo 0.523   0.019 *  
-## Abbr 0.499   0.033 *  
+##       stat p.value   
+## Legi 0.658   0.002 **
+## Baba 0.645   0.004 **
+## Rham 0.600   0.005 **
+## Acce 0.594   0.005 **
+## Cyca 0.586   0.006 **
+## Chna 0.571   0.005 **
+## Blbj 0.571   0.012 * 
+## Gogo 0.523   0.011 * 
+## Abbr 0.499   0.016 * 
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><strong><em>Question 8</em></strong>: Based on the PERMANOVA, IndVal, and phi coefficient analyses, what did you learn about the relationship between habitat quality and the fish species composition?</p>
@@ -731,7 +731,7 @@ mantel(fish.dist,env.dist)</code></pre>
 ## 
 ## Upper quantiles of permutations (null model):
 ##   90%   95% 97.5%   99% 
-## 0.114 0.145 0.157 0.179 
+## 0.101 0.140 0.169 0.198 
 ## Permutation: free
 ## Number of permutations: 999</code></pre>
 <p><strong><em>Question 9</em></strong>: What do the results from our Mantel test suggest about fish diversity and stream environmental conditions? How does this relate to your hypothesis about stream quality influencing fish communities?</p>
@@ -1007,7 +1007,7 @@ step.pcnm = ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)</code><
 ## - PCNM2           0.0000000
 ## 
 ##         Df    AIC      F Pr(&gt;F)   
-## + PCNM3  1 46.083 5.4196  0.004 **
+## + PCNM3  1 46.083 5.4196  0.002 **
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -1035,8 +1035,8 @@ step.pcnm = ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)</code><
 ## - PCNM3          0.23537042
 ## - PCNM2          0.07839489
 ## 
-##         Df    AIC      F Pr(&gt;F)   
-## + PCNM5  1 43.941 3.8385  0.004 **
+##         Df    AIC      F Pr(&gt;F)  
+## + PCNM5  1 43.941 3.8385  0.012 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -1065,7 +1065,7 @@ step.pcnm = ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)</code><
 ## - PCNM2           0.1195237
 ## 
 ##         Df    AIC     F Pr(&gt;F)   
-## + PCNM1  1 41.411 4.057  0.006 **
+## + PCNM1  1 41.411 4.057  0.008 **
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -1094,7 +1094,7 @@ step.pcnm = ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)</code><
 ## - PCNM2           0.1269210
 ## 
 ##          Df    AIC      F Pr(&gt;F)  
-## + PCNM13  1 39.346 3.4612  0.016 *
+## + PCNM13  1 39.346 3.4612  0.022 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -1122,8 +1122,8 @@ step.pcnm = ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)</code><
 ## - PCNM3           0.4111185
 ## - PCNM2           0.2307026
 ## 
-##          Df   AIC      F Pr(&gt;F)   
-## + PCNM16  1 36.48 4.0192   0.01 **
+##          Df   AIC      F Pr(&gt;F)  
+## + PCNM16  1 36.48 4.0192  0.016 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -1152,7 +1152,7 @@ step.pcnm = ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)</code><
 ## - PCNM2           0.2646853
 ## 
 ##         Df    AIC      F Pr(&gt;F)  
-## + PCNM6  1 35.182 2.5296  0.042 *
+## + PCNM6  1 35.182 2.5296  0.036 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -1181,7 +1181,7 @@ step.pcnm = ordiR2step(doubs.pcnm.mod0, doubs.pcnm.mod1, perm.max = 200)</code><
 ## - PCNM2           0.2824470
 ## 
 ##         Df    AIC     F Pr(&gt;F)  
-## + PCNM8  1 34.219 2.151   0.09 .
+## + PCNM8  1 34.219 2.151  0.078 .
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <pre class="r"><code># Because this is another dbRDA, we could visualize the biplot
@@ -1192,12 +1192,12 @@ plot(step.pcnm)</code></pre>
 step.pcnm$anova</code></pre>
 <pre><code>##                  R2.adj Df    AIC      F Pr(&gt;F)   
 ## + PCNM2         0.23537  1 49.574 9.6190  0.002 **
-## + PCNM3         0.34293  1 46.083 5.4196  0.004 **
-## + PCNM5         0.40760  1 43.941 3.8385  0.004 **
-## + PCNM1         0.47215  1 41.411 4.0570  0.006 **
-## + PCNM13        0.52124  1 39.346 3.4612  0.016 * 
-## + PCNM16        0.57680  1 36.480 4.0192  0.010 **
-## + PCNM6         0.60431  1 35.182 2.5296  0.042 * 
+## + PCNM3         0.34293  1 46.083 5.4196  0.002 **
+## + PCNM5         0.40760  1 43.941 3.8385  0.012 * 
+## + PCNM1         0.47215  1 41.411 4.0570  0.008 **
+## + PCNM13        0.52124  1 39.346 3.4612  0.022 * 
+## + PCNM16        0.57680  1 36.480 4.0192  0.016 * 
+## + PCNM6         0.60431  1 35.182 2.5296  0.036 * 
 ## &lt;All variables&gt; 0.62601                           
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
@@ -1263,7 +1263,7 @@ permutest(doubs.env.cond.space, permutations = 999)</code></pre>
 ##     .External(C_devoff, as.integer(which))
 ##     dev.cur()
 ## }
-## &lt;bytecode: 0x7f8aa3f93460&gt;
+## &lt;bytecode: 0x7f920b6d5660&gt;
 ## &lt;environment: namespace:grDevices&gt;</code></pre>
 <pre class="r"><code># Using the built-in varpart() function
 doubs.varpart = varpart(fish.db, env.mod, space.mod)
@@ -1309,11 +1309,7 @@ mtext(&quot;Variation Partitioning of\nDoubs Fish Diversity&quot;, side = 3, lin
 <h2>SYNTHESIS</h2>
 <p>Load the dataset you are using for your project. Perform an ordination to visualize your dataset. Using this ordination, develop some hypotheses relevant to <span class="math inline">\(\beta\)</span>-diversity and identify the appropriate tools you would use to test them.</p>
 <pre class="r"><code># Loading required packages 
-install.packages(&quot;dplyr&quot;, repos = &quot;http://cran.rstudio.com/&quot;)</code></pre>
-<pre><code>## 
-## The downloaded binary packages are in
-##  /var/folders/65/897bx8690x5_qclp18zt0sf80000gn/T//RtmpW55m7S/downloaded_packages</code></pre>
-<pre class="r"><code>require(&quot;dplyr&quot;)</code></pre>
+require(&quot;dplyr&quot;)</code></pre>
 <pre><code>## Loading required package: dplyr</code></pre>
 <pre><code>## 
 ## Attaching package: 'dplyr'</code></pre>
@@ -1410,7 +1406,7 @@ PERMA.06 </code></pre>
 ## Terms added sequentially (first to last)
 ## 
 ##            Df SumsOfSqs  MeanSqs F.Model      R2 Pr(&gt;F)
-## soil_treat  3    0.2292 0.076403 0.34078 0.04863  0.998
+## soil_treat  3    0.2292 0.076403 0.34078 0.04863  0.999
 ## Residuals  20    4.4840 0.224198         0.95137       
 ## Total      23    4.7132                  1.00000</code></pre>
 <pre class="r"><code>PERMA.07</code></pre>
@@ -1424,7 +1420,7 @@ PERMA.06 </code></pre>
 ## Terms added sequentially (first to last)
 ## 
 ##            Df SumsOfSqs  MeanSqs F.Model      R2 Pr(&gt;F)
-## soil_treat  3    0.2948 0.098282 0.40013 0.05662  0.997
+## soil_treat  3    0.2948 0.098282 0.40013 0.05662  0.999
 ## Residuals  20    4.9125 0.245626         0.94338       
 ## Total      23    5.2074                  1.00000</code></pre>
 <pre class="r"><code>PERMA.08 </code></pre>
@@ -1438,7 +1434,7 @@ PERMA.06 </code></pre>
 ## Terms added sequentially (first to last)
 ## 
 ##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)
-## soil_treat  3    0.4008 0.13361 0.59238 0.08161  0.943
+## soil_treat  3    0.4008 0.13361 0.59238 0.08161  0.938
 ## Residuals  20    4.5110 0.22555         0.91839       
 ## Total      23    4.9118                 1.00000</code></pre>
 <pre class="r"><code>PERMA.09</code></pre>
@@ -1452,7 +1448,7 @@ PERMA.06 </code></pre>
 ## Terms added sequentially (first to last)
 ## 
 ##            Df SumsOfSqs MeanSqs F.Model      R2 Pr(&gt;F)
-## soil_treat  3    0.5218 0.17393 0.85599 0.11379  0.676
+## soil_treat  3    0.5218 0.17393 0.85599 0.11379  0.664
 ## Residuals  20    4.0637 0.20319         0.88621       
 ## Total      23    4.5855                 1.00000</code></pre>
 <blockquote>
