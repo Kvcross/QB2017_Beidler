@@ -1,15 +1,8 @@
 ---
-<<<<<<< HEAD
-title: 'Assignment: Among Site (Beta) Diversity'
-author: 'Katie Beidler; Z620: Quantitative Biodiversity, Indiana University'
-=======
 title: "Assignment: Among Site (Beta) Diversity"
 author: "Katie Beidler; Z620: Quantitative Biodiversity, Indiana University"
->>>>>>> origin/master
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:
-  html_document: default
-  pdf_document: default
+output: html_document
 geometry: margin=2.54cm
 ---
 
@@ -49,29 +42,24 @@ In the R code chunk below, provide the code to:
 3. set your working directory to your "*/Week3-Beta*" folder, and
 4. load the `vegan` R package (be sure to install if needed).  
 
-```{r}
-rm(list = ls())
+```{r warning=FALSE}
+clr = function() {
+  ENV = globalenv()
+  ll = ls(envir = ENV)
+  ll = ll[ll != "clr"]
+  rm(list = ll, envir = ENV)
+}
 getwd() 
-<<<<<<< HEAD
-setwd("/Users/beidler/downloads")
+setwd("/Users/bhbeidler/GitHub/QB2017_Beidler/Week3-Beta")
 
 # Loading Required Packages
-package.list = c('vegan', 'ade4', 'viridis', 'gplots','indicspecies') 
-=======
-setwd("/Users/kbeidler/GitHub/QB2017_Beidler/Week3-Beta")
-
-# Loading Required Packages
-package.list = c('vegan', 'ade4', 'viridis', 'gplots', 'BiodiversityR', 'indicspecies') 
->>>>>>> origin/master
+package.list = c('vegan', 'ade4', 'viridis', 'gplots', 'indicspecies') 
 for (package in package.list) {
   if (!require(package, character.only=T, quietly=T)) { install.packages(package)
   library(package, character.only=T)
   } 
 }
-<<<<<<< HEAD
 # I could not get the BiodiversityR package to load- I tried loading it from the source...instead I just copied the add species function from the BiodiversityR GitHub repo.
-=======
->>>>>>> origin/master
 ```
 
 ## 2) LOADING DATA
@@ -107,12 +95,10 @@ b.  How does Brown Trout (*Salmo trutta*) abundance vary along the sampled reach
 c.  What do these patterns say about the limitations of using richness when examining patterns of biodiversity?
 
 > ***Answer 2a***: Downstream richness values are higher compared to upstream values and there is another region of high richness towards the middle of the stream.
+
 > ***Answer 2b***: Brown Trout (*Salmo trutta*) abundance generally increases as you move upstream. 
-<<<<<<< HEAD
-> ***Answer 2c***: While richness tended to be higher downstream, the composition of the community likely differed between upstream and downstream regions of the stream (many of the downstream sites did not have any Brown Trout present). Therefore there are limitations associated with richness when examining patterns of biodiversity across sites, because richness may be the same among sites but species composition may differ.  
-=======
+
 > ***Answer 2c***: While richness tended to be higher downstream, the composition of the community likely differed between upstream and downstream regions of the stream as Brown Trout abundance was highest upstrea. Therefor there are limitations associated with richness when examining patterns of biodiversity across sites, because richness may be the same among sites but species composition may differ.  
->>>>>>> origin/master
 
 ## 3) QUANTIFYING BETA-DIVERSITY
 
@@ -147,28 +133,22 @@ beta.w2 = function(site.by.species = "", sitenum1 = "", sitenum2 = "", pairwise 
     return(b.w)
   }
   else{
-<<<<<<< HEAD
   SbyS.pa = decostand(site.by.species, method = "pa")
   S = ncol(SbyS.pa[,which(colSums(SbyS.pa) > 0)])
   a.bar = mean(specnumber(SbyS.pa))
   b.w = round(S/a.bar, 3)
-=======
   SbyS.pa <- decostand(site.by.species, method = "pa")
-  S <- ncol(SbyS.pa[,which(colSums(SbyS.pa) > 0)])
-  a.bar <- mean(specnumber(SbyS.pa))
-  b.w <- round(S/a.bar, 3)
->>>>>>> origin/master
+  S = ncol(SbyS.pa[,which(colSums(SbyS.pa) > 0)])
+  a.bar = mean(specnumber(SbyS.pa))
+  b.w = round(S/a.bar, 3)
   return(c(b.w,a.bar,S))
 }
 }
 # Calculating beta, average Richness at each site aka local richness, and gamma (S)
 beta.w2(doubs$fish)
 # a.bar = average richness at each site = 12.5
-<<<<<<< HEAD
 # Whittakers turover is how many times the species composition changes completely among the two sites
-=======
 # comparing site 1 to site 2 dissimilarity*
->>>>>>> origin/master
 beta.w2(doubs$fish,1,2,pairwise = TRUE)
 # comparing site 1 to site 10
 beta.w2(doubs$fish,1,10,pairwise = TRUE)
@@ -182,22 +162,17 @@ c.  Using your understanding of the equation $\beta_{w} = \gamma/\alpha$, how wo
 
 > ***Answer 3a***: $\beta_{w} = 2.16. This index quantifies how many more times more diverse the regional species pool ($\gamma$ = 27) is than the average richness at each site within the region ($\alpha$ = 12.5 in this case). For the River Doubs ($\gamma$) fish diversity is around double ($\alpha$) fish diversity. So ($\gamma$) fish diversity is due to high richness and low turnover.
 > ***Answer 3b***: Site 1 is more similar to site 2 than site 10.
-<<<<<<< HEAD
+
 > ***Answer 3c***: If you defined beta additively (i.e., $\beta = \gamma - \alpha$) then beta would be 14.5 and the interpretation would change as beta and alpha would be closer in value than before.  
-=======
-> ***Answer 3c***: If you defined beta additively (i.e., $\beta = \gamma - \alpha$) then beta would be 14.5 and the interpretation would change from 3a. as beta and alpha would be closer in value. 
->>>>>>> origin/master
 
 ### The Resemblance Matrix
 In order to quantify $\beta$-diversity for more than two samples, we need to introduce a new primary ecological data structure: the **Resemblance Matrix**. 
 
 ***Question 4***: How do incidence- and abundance-based metrics differ in their treatment of rare species?
 
-<<<<<<< HEAD
+
 > ***Answer 4***: Incidence-based similarity metrics treat abundant and  rare  species equally, whereas abundance-based metrics do not. For example, the Morisita-Horn index is influenced by abundant species. 
-=======
-> ***Answer 4***: 
->>>>>>> origin/master
+
 
 In the R code chunk below, do the following:  
 
@@ -415,17 +390,7 @@ b.  Generate a hypothesis about which fish species are potential indicators of r
 
 > ***Answer 7a***:  Sites are grouped along the PCoA axes with respect to the variation in the abundance of different fish species which likely corresponds to their location either upstream, midstream or downstream in the River Doubs. Thus, upstream sites have more similar abundances of fish species and similar species composition compared to other regions.  PCoA1 likely corresponds to an environmental variable associated with different stream regions (streamflow, temperature, water quality etc. )
 
-> ***Answer 7b***:The following species can be used as indicator species for river quality: 
-+ *Phoxinus phoxinus*
-+ *Nemacheilus barbatulus*
-+ *Rhodeus amarus*
-+ *Lepomis gibbosus*
-+ *Cyprinus carpio*
-+ *Abramis brama*
-+ *Acerina cernua*
-+ *Blicca bjoerkna*
-+ *Alburnus alburnus*
-+ *Anguilla anguilla*
+> ***Answer 7b***:The following species can be used as indicator species for river quality: *Phoxinus phoxinus*, *Nemacheilus barbatulus*, *Rhodeus amarus*, *Lepomis gibbosus*, *Cyprinus carpio*, *Abramis brama*, *Acerina cernua*, *Blicca bjoerkna*, *Alburnus alburnus*, and *Anguilla anguilla*.
 
 ## 5) HYPOTHESIS TESTING
 
@@ -617,7 +582,93 @@ mtext("Variation Partitioning of\nDoubs Fish Diversity", side = 3, line = -3)
 
 ## SYNTHESIS
 Load the dataset you are using for your project. Perform an ordination to visualize your dataset.  Using this ordination, develop some hypotheses relevant to $\beta$-diversity and identify the appropriate tools you would use to test them.
-```{r}
+```{r warning=FALSE}
+# Loading required packages 
+install.packages("dplyr", repos = "http://cran.rstudio.com/")
+require("dplyr")
+
+# Reading in tree diversity data
+plant = read.csv("/Users/bhbeidler/GitHub/QB2017_DivPro/Data/HF_plants.csv")
+
+# Subsetting the data into the different years
+plant_06 = filter(plant, year == 2006)
+plant_07 = filter(plant, year == 2007)
+plant_08 = filter(plant, year == 2008)
+plant_09 = filter(plant, year == 2009)
+
+# Separating out the treatments from the site by species matricies 
+plant_06_sbys = plant_06[ ,4:43]
+plant_07_sbys = plant_07[ ,4:43]
+plant_08_sbys = plant_08[ ,4:43]
+plant_09_sbys = plant_09[ ,4:43]
+
+# Ordination
+
+# construct a resemblance matrix based on Bray-Curtis Distance ("plant_2006.db") for 2006
+plant_06.db = vegdist(plant_06_sbys, method = "bray", upper = TRUE, diag = TRUE)
+# Perform a Principal Coordinates Analysis to visualize beta-diversity
+plant_06.pcoa = cmdscale(plant_06.db, eig = TRUE, k = 3)
+
+# Calculate the variation explained by the first three axes in your ordination
+explainvar1 = round(plant_06.pcoa$eig[1] / sum(plant_06.pcoa$eig), 3) * 100
+explainvar2 = round(plant_06.pcoa$eig[2] / sum(plant_06.pcoa$eig), 3) * 100
+explainvar3 = round(plant_06.pcoa$eig[3] / sum(plant_06.pcoa$eig), 3) * 100
+sum.eig = sum(explainvar1, explainvar2, explainvar3)
+
+
+# plot the PCoA ordination
+# Define Plot Parameters
+par(mar = c(5, 5, 1, 2) + 0.1)
+# Initiate Plot
+plot(plant_06.pcoa$points[ ,1], plant_06.pcoa$points[ ,2], 
+xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+main = "Ordination for 2006",
+pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+# Add Axes
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+# Add Points & Labels
+points(plant_06.pcoa$points[ ,1], plant_06.pcoa$points[ ,2],
+pch = 16, cex = 3, bg = "gray", col = "gray")
+text(plant_06.pcoa$points[ ,1], plant_06.pcoa$points[ ,2],
+labels = row.names(plant_06.pcoa$points))
+
+# Identify influential species 
+# First we calculate the relative abundances of each species at each site
+plant_06REL = plant_06_sbys 
+for(i in 1:nrow(plant_06_sbys )){
+plant_06REL[i, ] = plant_06_sbys [i, ] / sum(plant_06_sbys [i, ])
+}
+# Now, we use this information to calculate and add species scores
+plant_06.pcoa= add.spec.scores(plant_06.pcoa,plant_06REL,method = "pcoa.scores")
+text(plant_06.pcoa$cproj[ ,1], plant_06.pcoa$cproj[ ,2],
+labels = row.names(plant_06.pcoa$cproj), col = "black")
+
+# Hypothesis Testing
+# H1: Soil treatment (either warming or N fertilization) influenced beta diversity during 2006. 
+
+# Multivariate Procedures for Categorical designs 
+
+# There are 40 tree species. For each year and each treatment there are 6 sites. Treatments include: 1=control, 2=warm, 3=nitrogen, 4=warm/nitrogen
+# Create "Factors" vector for categorizing soil treatments
+soil_treat = as.factor(plant_06[ ,3])
+
+# Run PERMANOVA with adonis function
+PERMA.06 = adonis(plant_06_sbys ~ soil_treat, method = "bray", permutations = 999)
+PERMA.07 = adonis(plant_07_sbys ~ soil_treat, method = "bray", permutations = 999)
+PERMA.08 = adonis(plant_08_sbys ~ soil_treat, method = "bray", permutations = 999)
+PERMA.09 = adonis(plant_09_sbys ~ soil_treat, method = "bray", permutations = 999)
+
+PERMA.06 
+PERMA.07
+PERMA.08 
+PERMA.09
+```
+> ***Answer Synthesis***: Testing to see if the warming or N treatments influence beta diversity. I used a PERMANOVA to test the hypothesis that tree community composition varies with  soil treatment. There was no siginificant effect of soil treatment on beta diversity for any of the years. To perform the PERMANOVA I had to subset the data into the different years. To test for the effects of both time and soil treatments on tree community composition we could perform a RDA- partitioning the variance between treatments and time. The study may have been too short to capture any changes in diversity. There is also a companion dataset for this study that looks at ant diversity in the same plots over the same time period. The next step will be to look at ant diversity in addition to tree diversity. 
 
 ```
 
