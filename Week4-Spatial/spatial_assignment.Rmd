@@ -1,6 +1,6 @@
 ---
 title: "Assignment: Spatial Diversity"
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+author: "Katie Beidler; Z620: Quantitative Biodiversity, Indiana University"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 geometry: margin=2.54cm
@@ -37,8 +37,9 @@ In the R code chunk below, provide the code to:
 3. Set your working directory to your "*/Week4-Spatial*" folder, and
 
 ```{r, results = 'hide'}
-
-
+rm(list=ls())
+getwd()
+setwd("/Users/kbeidler/GitHub/QB2017_Beidler/Week4-Spatial")
 ```
 
 ## 2) LOADING R PACKAGES
@@ -48,14 +49,24 @@ In the R code chunk below, do the following:
 1. Install and/or load the following packages: `vegan`, `sp`, `gstat`, `raster`, `RgoogleMaps`, `maptools`, `rgdal`, `simba`, `gplots`, `rgeos`
 
 ```{r, results = 'hide', message = FALSE, warning = FALSE} 
-
-
-
+require(vegan)
+#install.packages('sp') # Classes and methods for handling spatial data require(sp)
+#install.packages('gstat') # Methods for geostatistical analyses
+require(gstat)
+#install.packages('raster') # Methods to create a RasterLayer object require(raster)
+#install.packages('RgoogleMaps') # For querying the Google server for static maps. require(RgoogleMaps)
+#install.packages('maptools') # Tools for manipulating and reading geospatial data require(maptools)
+#install.packages('rgdal') # Geospatial Data Abstraction Library
+require(rgdal)
+#install.packages('simba')
+require("simba")
+#install.packages('gplots')
+require("gplots")
 ```
 
 ***Question 1***:  What are the packages `simba`, `sp`, and `rgdal` used for?
 
-> ***Answer 1***:  
+> ***Answer 1***:  The Simba package uses a collection of functions for similarity analysis of vegetation data, as well as, functions for reshaping species lists into matrices. The sp function creates classes for spatial data and provides utility functions, e.g. for plotting data as maps, spatial selection, as well as methods for retrieving coordinates, for subsetting, print, summary, etc. Rgdal is a package that helps you read in vector-based spatial data.
 
 
 ## 3) LOADING DATA
@@ -67,17 +78,34 @@ In the R code chunk below, use the example in the handout to do the following:
 4. Remove the first column (i.e., site names) from the OTU matrix.
 
 ```{r, results = 'hide', message = FALSE, warning = FALSE} 
+Ponds = read.table(file = "BrownCoData/20130801_PondDataMod.csv", head = TRUE, sep = ",") 
+lats = as.numeric(Ponds[, 3]) 
+# latitudes (north and south)
+lons = as.numeric(Ponds[, 4]) 
+# longitudes (east and west)
+OTUs = read.csv(file = "BrownCoData/SiteBySpecies.csv", head = TRUE, sep = ",")
+# remove first column (site names)
+OTUs = as.data.frame(OTUs[-1]) 
 
+# To get S, we sum the number of non-zero abundances for a site
+S.obs = function(x = ""){ rowSums(x > 0) * 1} 
+otu.names = names(OTUs) # Get the names of the OTUs
+Ponds$N = as.vector(rowSums(OTUs)) # numbers of reads 
 
+Ponds$S = S.obs(OTUs) # number of species OTUs
+max(Ponds$S)
+Ponds$H = as.vector(diversity(OTUs, index = "shannon"))
+# To get De at each site, we divide Simpson's Diversity by OTU site richness
+Ponds$D = as.vector(diversity(OTUs, index = "invsimpson")/Ponds$S)
 ```
 
 ***Question 2a***:  How many sites and OTUs are in the SiteBySpecies matrix? 
 
-> ***Answer 2a***:  
+> ***Answer 2a***:  There are 51 sites and 16,383 OTUs. 
 
 ***Question 2b***:  What is the greatest species richness found among sites?
 
-> ***Answer 2b***:  
+> ***Answer 2b***:  3,659 is the greatest species richness found at site 47.
 
 
 ## 4) GENERATE MAPS
@@ -88,50 +116,54 @@ In the R code chunk below, do the following:
 This map will be centered on Brown County, Indiana (39.1 latitude, -86.3 longitude).
 
 ```{r}
-
+require('RgoogleMaps')
+newmap = GetMap(center = c(39.1,-86.3), zoom = 10,
+destfile = "PondsMap.png", maptype="terrain")
+PlotOnStaticMap(newmap, zoom = 10, cex = 2, col = 'blue') 
 ```
 
 ***Question 3***:  Briefly describe the geographical layout of our sites.
 
-> ***Answer 3***:  
+> ***Answer 3***:  The sites appear to be clustered around bodies of water in areas with low tree cover. 
 
 
 In the R code chunk below, do the following:  
 
 1. Using the example in the handout, build a map by combining lat-long data from our ponds with land cover data and data on the locations and shapes of surrounding water bodies.
 
-```{r}
+```{r, results = 'hide', message = FALSE, warning = FALSE}
 # 1. Import TreeCover.tif as a raster file.
-
+require('raster')
+Tree.Cover = raster("TreeCover/TreeCover.tif") # import TreeCover.tif as a raster file.
 # 2. Plot the % tree cover data
-
+plot(Tree.Cover, xlab = 'Longitude', ylab = 'Latitude', 
+     main = 'Map of geospatial data for % tree cover,\nwater bodies, and sample sites')
 # 3. Import water bodies as a shapefile.
-
-# 4. Plot the water bodies around our study area, i.e., Monroe County.
-
-# 5. Convert lat-long data for ponds to georeferenced points.
-
-# 6. Plot the refuge pond locations
-
+require('maptools')
+Water.Bodies = readShapeSpatial("water/water.shp") # import water bodies as a shapefile
+# 4. Plot the water bodies around our study area, i.e., Monroe County
+plot(Water.Bodies, border='cyan', axes = TRUE, add = TRUE)
+# 5. Plot the refuge pond locations
+Refuge.Ponds = SpatialPoints(cbind(lons, lats)) 
+# 6. Convert lat-long data for ponds to georeferenced points.
+plot(Refuge.Ponds, line='r', col='red', pch = 20, cex = 1.5, add = TRUE)
 ```
 
 ***Question 4a***: What are datums and projections?
 
-> ***Answer 4a***:  
-
+> ***Answer 4a***: A datum is a model for Earth’s shape and a projection is the way in which coordinates on a sphere are projected onto a 2-D surface and the distoriation that accompanies that proccess. Datums and projections are fundamental to making maps and geospatial analysis.
 
 ## 5) UNDERSTANDING SPATIAL AUTOCORRELATION
 
 ***Question 5***: In your own words, explain the concept of spatial autocorrelation.
 
-> ***Answer 5***:
-
+> ***Answer 5***: Spatial autocorrelation is the idea that samples or individuals that are closer in space are more similar to one another.[Spatial autocorrelation is the degree to which spatial variables are either clustered in space or overdispersed.] Increasing similarity with decreasing geographic distance. Things that are closer in physical space are more similar to one another.
 
 ## 6) EXAMINING DISTANCE-DECAY
 
 ***Question 6***: In your own words, explain what a distance decay pattern is and what it reveals.
 
-> ***Answer 6***:
+> ***Answer 6***: The distance-decay relationship shows the pattern of autocorrelation, how Bray Curtis dissimilarity values change as you move greater distances. Bray-curtis decreases as geographic distance increases. If there is no distance decay relationship sites are not spatially autocorrelated and there is no distance at which you can't compare species.
 
 In the R code chunk below, do the following:  
 
@@ -139,39 +171,62 @@ In the R code chunk below, do the following:
 Note: You will need to use some of the data transformations within the *semivariogram* section of the handout.
 
 ```{r, results = 'hide', message = FALSE, warning = FALSE}
+# Construct a new dataframe for coordinates
+xy = data.frame(env = Ponds$TDS, pond.name = Ponds$Sample_ID, lats = Ponds$lat, lons = Ponds$long)
+coordinates(xy) = ~lats+lons # Transform 'xy' into a spatial points dataframe
+# Identify the current projection (i.e., lat-long) and datum (NAD83)
+proj4string(xy) = CRS("+proj=longlat +datum=NAD83") # coordinate reference system (CRS)
+UTM = spTransform(xy, CRS("+proj=utm +zone=51 +ellps=WGS84"))
+UTM = as.data.frame(UTM)
+xy$lats_utm = UTM[,2] # lattitude data according to UTM
+xy$lons_utm = UTM[,3] # longitude data according to UTM
+
 # 1) Calculate Bray-Curtis similarity between plots using the `vegdist()` function
-
+comm.dist = 1 - vegdist(OTUs) # Bray-Curtis similarity between the plots
 # 2) Assign UTM lattitude and longitude data to 'lats' and 'lons' variables
-
+lats = as.numeric(xy$lats_utm) # lattitude data
+lons = as.numeric(xy$lons_utm) # longitude data
 # 3) Calculate geographic distance between plots and assign to the variable 'coord.dist'
-
+coord.dist = dist(as.matrix(lats, lons)) # geographical distance between plots
 # 4) Transform environmental data to numeric type, and assign to variable 'x1'
-
+x1 = as.numeric(Ponds$"SpC")
 # 5) Using the `vegdist()` function in `simba`, calculate the Euclidean distance between the plots for environmental variables. Assign the result to the variable 'env.dist'
-
+env.dist = vegdist(x1, "euclidean") 
 # 6) Transform all distance matrices into database format using the `liste()` function in `simba`:
-
+comm.dist.ls = liste(comm.dist, entry="comm") 
+env.dist.ls = liste(env.dist, entry="env") 
+coord.dist.ls = liste(coord.dist, entry="dist")
 # 7) Create a data frame containing similarity of the environment and similarity of community.
-
+df = data.frame(coord.dist.ls, env.dist.ls[,3], comm.dist.ls[,3])
 # 8) Attach the columns labels 'env' and 'struc' to the dataframe you just made.
-
+names(df)[4:5] = c("env", "struc")
+attach(df)
 # 9) After setting the plot parameters, plot the distance-decay relationships, with regression lines in red.
+par(mfrow=c(1, 2), pty="s")
+plot(env, struc, xlab="Environmental Distance", ylab="1 - Bray-Curtis",
+     main = "Environment", col='SteelBlue')
+
+OLS = lm(struc ~ env)
+OLS # print regression results to the screen
+abline(OLS, col="red4")
+plot(dist, struc, xlab="Geographic Distance", ylab="1 - Bray-Curtis", main="Community\nComposition", col='darkorchid4')
+OLS = lm(struc ~ dist)
+abline(OLS, col="red4")
 
 # 10) Use `simba` to calculates the difference in slope or intercept of two regression lines
-
+diffslope(env, struc, dist, struc)
 ```
 
+***Question 7***: What can you conclude about community similarity with regard to environmental distance and geographic distance?
 
-***Question 7***: What can you conclude about community similarity with regars to environmental distance and geographic distance?
-
-> ***Answer 7***: 
+> ***Answer 7***: Community similarity decreases with environmenal distance and does not differ with respect to geographic distance- near environments have greater similarity than far ones. communities close to one another are more similar than communities that are farther away. 
 
 
 ## 7) EXAMINING SPECIES SPATIAL ABUNDANCE DISTRIBUTIONS
 
 ***Question 8***: In your own words, explain the species spatial abundance distribution and what it reveals.
 
-> ***Answer 8***:
+> ***Answer 8***: Spatial abundance distributions reveal the frequency at which we find individuals at particular abundances - patterns of spatial aggregation (distribution of individuals within a landscape)
 
 
 In the R code chunk below, do the following: 
@@ -181,15 +236,27 @@ In the R code chunk below, do the following:
 
 ```{r}
 # 1. Define an SSAD function
-
+ssad = function(x){
+  ad = c(2, 2)
+  ad = OTUs[, otu]
+  ad = as.vector(t(x = ad))
+  ad = ad[ad > 0]
+}
 # 2. Set plot parameters
-
+par(mfrow=c(2, 2))
 # 3. Declare a counter variable
-
+ct = 0 
 # 4. Write a while loop to plot the SSADs of six species chosen at random 
-
+while (ct < 4){
+otu = sample(1:length(OTUs), 1) 
+ad = ssad(otu) 
+if (length(ad) > 10 & sum(ad > 100)){ 
+ct = ct + 1
+plot(density(ad), col = 'red', xlab='Site abundance',
+ylab='Probability Density', main = otu.names[otu])
+} 
+}
 ```
-
 
 ## 8) UNDERSTANDING SPATIAL SCALE
 Many patterns of biodiversity relate to spatial scale.
