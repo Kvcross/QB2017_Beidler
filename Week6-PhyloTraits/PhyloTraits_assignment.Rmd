@@ -1,6 +1,6 @@
 ---
 title: "Phylogenetic Diversity - Traits"
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+author: "Katie Beidler; Z620: Quantitative Biodiversity, Indiana University"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 geometry: margin=2.54cm
@@ -45,8 +45,23 @@ In the R code chunk below, provide the code to:
 4. load all of the required R packages (be sure to install if needed).  
 
 ```{r}
+clr = function() {
+  ENV = globalenv()
+  ll = ls(envir = ENV)
+  ll = ll[ll != "clr"]
+  rm(list = ll, envir = ENV)
+}
+getwd() 
+setwd("/Users/kbeidler/GitHub/QB2017_Beidler/Week6-PhyloTraits")
 
-
+package.list = c('ape', 'seqinr', 'phylobase', 'adephylo', 'geiger',
+'picante', 'stats', 'RColorBrewer', 'caper', 'phylolm',
+'pmc', 'ggplot2', 'tidyr', 'dplyr', 'phangorn', 'pander')
+for (package in package.list) {
+if (!require(package, character.only = TRUE, quietly = TRUE)) {
+install.packages(package, repos='http://cran.us.r-project.org')
+library(package, character.only = TRUE) }
+}
 ```
 
 ## 2) DESCRIPTION OF DATA
@@ -61,7 +76,7 @@ In this exercise, we will take a phylogenetic approach to mapping phosphorus res
 ***Question 1***: Using less or your favorite text editor, compare the `p.isolates.fasta` file and the `p.isolates.afa` file. 
 Describe the differences that you observe between the files. 
 
-> ***Answer 1***: 
+> ***Answer 1***: The `p.isolates.afa` file is the FASTA aligned output file- in which the sequences have been alligned. In the `p.isolates.fasta` file the isolates have not been alligned.
 
 In the R code chunk below, do the following:
 1. read your alignment file,
@@ -70,8 +85,21 @@ In the R code chunk below, do the following:
 4. plot the alignment using a grid to visualize rows of sequences.
 
 ```{r}
+# 1. Read in the alignment file
+read.aln = read.alignment(file = "./data/p.isolates.afa", format = "fasta")
 
+# 2. Convert the alignment to a DNAbin object
+p.DNAbin = as.DNAbin(read.aln)
 
+# 3. Identify a base pair region of 16S rRNA gene to visualize 
+window = p.DNAbin[, 100:500]
+window.full = p.DNAbin[, 100:1000]
+# 4. Plot the alignment- Command to Visualize sequence alignment {ape}
+image.DNAbin(window, cex.lab = 0.50)
+grid(ncol(window), nrow(window), col = "lightgrey")
+
+image.DNAbin(window.full, cex.lab = 0.50)
+grid(ncol(window.full), nrow(window.full), col = "lightgrey")
 ```
 
 ***Question 2***:  Make some observations about the `muscle` alignment of the 16S rRNA gene sequences for our bacterial isolates and the outgroup, *Methanosarcina*, a member of the domain archaea. 
@@ -80,8 +108,8 @@ Move along the alignment by changing the values in the `window` object.
 a. Approximately how long are our reads?  
 b. What regions do you think would are appropriate for phylogenetic inference and why?  
 
-> ***Answer 2a***:   
-> ***Answer 2b***:  
+> ***Answer 2a***: Approimately 700 reads.
+> ***Answer 2b***: The regions that are variable would be the most appropriate for phylogenetic inference, because those regions with sequence variation will help us determine which species differ with respect to phosphorus metabolism. 
 
 ## 4) MAKING A PHYLOGENETIC TREE
 
@@ -97,6 +125,21 @@ In the R code chunk below, do the following:
 4. plot the rooted tree. 
 
 ```{r}
+# 1. calculate the distance matrix using `model = "raw"`
+seq.dist.raw = dist.dna(p.DNAbin, model = "raw", pairwise.deletion = FALSE)
+
+# 2. create a Neighbor Joining tree based on these distances
+# Neighbor Joining Algorithm to Construct Tree, a 'phylo'
+nj.tree = bionj(seq.dist.raw)
+# ID Outgroup Sequence
+outgroup = match("Methanosarcina", nj.tree$tip.label)
+# Root the Tree{ape}
+nj.rooted = root(nj.tree, outgroup, resolve.root = TRUE)
+# Plot the rooted tree{ape}
+par(mar = c(1,1,2,1) + 0.1)
+plot.phylo(nj.rooted, main = "Neighbor Joining Tree", "phylogram",
+    use.edge.length = FALSE, direction = "right", cex = 0.6,label.offset = 1)
+add.scale.bar(cex = 0.7)
 
 
 ```
@@ -117,7 +160,41 @@ In the R code chunk below, do the following:
 4. create a cophylogenetic plot to compare the topologies of the trees.
 
 ```{r}
+# 1. Create distance matrix with "F84" model {ape}
+seq.dist.F84 = dist.dna(p.DNAbin, model = "F84", pairwise.deletion = FALSE)
 
+# 2. create a cophylogenetic plot to compare the topologies of the trees
+# Plot Distances from Different DNA Substitution Models
+par(mar = c(5, 5, 2, 1) + 0.1) 
+plot(seq.dist.raw, seq.dist.F84, pch = 20, col = "red", las = 1, asp = 1, xlim = c(0, 0.7), ylim = c(0, 0.7), xlab = "Raw Distance", ylab = "F84 Distance")
+abline(b = 1, a = 0, lty = 2)
+text(0.65, 0.6, "1:1")
+
+# Make Neighbor Joining Trees Using Different DNA Substitution Models {ape}
+raw.tree = bionj(seq.dist.raw) 
+F84.tree = bionj(seq.dist.F84)
+# Define Outgroups
+raw.outgroup = match("Methanosarcina", raw.tree$tip.label) 
+F84.outgroup = match("Methanosarcina", F84.tree$tip.label)
+# Root the Trees {ape}
+raw.rooted = root(raw.tree, raw.outgroup, resolve.root=TRUE)
+F84.rooted = root(F84.tree, F84.outgroup, resolve.root=TRUE)
+# Make Cophylogenetic Plot {ape}
+layout(matrix(c(1,2), 1, 2), width = c(1, 1))
+par(mar = c(1, 1, 2, 0))
+plot.phylo(raw.rooted, type = "phylogram", direction = "right", show.tip.label=TRUE,
+           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "Raw")
+
+par(mar = c(1, 0, 2, 1))
+plot.phylo(F84.rooted, type = "phylogram", direction = "left", show.tip.label=TRUE,
+           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "F84")
+
+# Set method = 'PH85' for the symmetric difference Set method
+# = 'score' for the symmetric difference This function
+# automatically checks for a root and unroots rooted trees,
+# so you can pass it either the rooted or unrooted tree and
+# get the same answer.
+dist.topo(raw.rooted, F84.rooted, method = "score")
 
 ```
 
@@ -129,8 +206,36 @@ In the R code chunk below, do the following:
 5. be sure to format, add appropriate labels, and customize each plot.
 
 ```{r}
+# 1. Create distance matrix with Kimura model K80 {ape}
+seq.dist.K80 = dist.dna(p.DNAbin, model = "K80", pairwise.deletion = FALSE)
 
+# 2. create a cophylogenetic plot to compare the topologies of the trees
+# Plot Distances from Different DNA Substitution Models
+par(mar = c(5, 5, 2, 1) + 0.1) 
+plot(seq.dist.F84, seq.dist.K80, pch = 20, col = "red", las = 1, asp = 1, xlim = c(0, 0.7), ylim = c(0, 0.7), xlab = "F84 Distance", ylab = "K80 Distance")
+abline(b = 1, a = 0, lty = 2)
+text(0.65, 0.6, "1:1")
 
+# Make Neighbor Joining Trees Using Different DNA Substitution Models {ape}
+F84.tree = bionj(seq.dist.F84)
+K80.tree = bionj(seq.dist.K80)
+# Define Outgroups
+F84.outgroup = match("Methanosarcina", F84.tree$tip.label)
+K80.outgroup = match("Methanosarcina", K80.tree$tip.label) 
+# Root the Trees {ape}
+F84.rooted = root(F84.tree, F84.outgroup, resolve.root=TRUE)
+K80.rooted = root(K80.tree, K80.outgroup, resolve.root=TRUE)
+# Make Cophylogenetic Plot {ape}
+layout(matrix(c(1,2), 1, 2), width = c(1, 1))
+par(mar = c(1, 1, 2, 0))
+par(mar = c(1, 0, 2, 1))
+plot.phylo(K80.rooted, type = "phylogram", direction = "right", show.tip.label=TRUE,
+           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "K80")
+
+plot.phylo(F84.rooted, type = "phylogram", direction = "left", show.tip.label=TRUE,
+           use.edge.length = FALSE, adj = 0.5, cex = 0.6, label.offset = 2, main = "F84")
+
+dist.topo(F84.rooted,K80.rooted,  method = "score")
 ```
 
 ***Question 4***:  
@@ -151,8 +256,28 @@ In the R code chunk below, do the following:
 2. Plot bootstrap support values onto the tree
 
 ```{r}
+# 1. Read in the maximum likelihood phylogenetic tree used in the handout
+# Requires alignment to be read in with as phyDat object
+p.DNAbin.phyDat = read.phyDat("./data/p.isolates.afa", format="fasta", type="DNA") 
+fit = pml(nj.rooted, data=p.DNAbin.phyDat)
+# Fit tree using a JC69 substitution model
+fitJC = optim.pml(fit, TRUE)
+# Fit tree using a GTR model with gamma distributed rates.
+fitGTR = optim.pml(fitGTR, model="GTR", optInv=TRUE, optGamma=TRUE)
+# rearrangement = "NNI", control = pml.control(trace = 0))
+# You can perform model selection with either an ANOVA test or by AIC value anova(fitJC, fitGTR)
+AIC(fitJC)
+AIC(fitGTR)
 
+# And you can perform a bootstrap test to see how well-supported the edges are
+bs = bootstrap.pml(fitJC, bs=100, optNni=TRUE, control = pml.control(trace = 0))
 
+ml.bootstrap = read.tree("./data/ml_tree/RAxML_bipartitions.T1") par(mar = c(1, 1, 2, 1) + 0.1)
+
+plot.phylo(ml.bootstrap, type = "phylogram", direction = "right",
+    show.tip.label = TRUE, use.edge.length = FALSE, cex = 0.6,
+label.offset = 1, main = "Maximum Likelihood with Support Values") add.scale.bar(cex = 0.7)
+nodelabels(ml.bootstrap$node.label, font = 2, bg = "white", frame = "r",cex = 0.5)
 ```
 
 ***Question 5***:  
