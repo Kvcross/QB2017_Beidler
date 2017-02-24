@@ -40,17 +40,23 @@ In the R code chunk below, provide the code to:
 4. load all of the required R packages (be sure to install if needed), and  
 5. load the required R source file.
 
-```{r}
+```{r results='hide', message=FALSE, warning=FALSE}
 
+clr = function() {
+  ENV = globalenv()
+  ll = ls(envir = ENV)
+  ll = ll[ll != "clr"]
+  rm(list = ll, envir = ENV)
+}
+getwd() 
+setwd("/Users/kbeidler/GitHub/QB2017_Beidler/Week7-PhyloCom")
 
+package.list = c('picante', 'ape', 'seqinr', 'vegan', 'fossil', 'simba') 
+for (package in package.list) {if (!require(package, character.only = TRUE, quietly = TRUE)) { install.packages(package, repos='http://cran.us.r-project.org') 
+  library(package, character.only = TRUE)
+} }
 
-
-
-
-
-
-
-
+source("./bin/MothurTools.R")
 ```
 
 ## 2) DESCRIPTION OF DATA
@@ -70,13 +76,29 @@ In the R code chunk below, do the following:
 6. load the taxonomic data using the `read.tax()` function from the source-code file.
 
 ```{r}
+# 1. load the environmental data for the Brown County ponds (*20130801_PondDataMod.csv*)
+env = read.table("data/20130801_PondDataMod.csv", sep = ",", header = TRUE) 
+env = na.omit(env)
 
+# 2. Load Site-by-Species Matrix
+comm = read.otu(shared = "./data/INPonds.final.rdp.shared", cutoff = "1")
 
+# 3. subset the data to include only DNA-based identifications of bacteria
+# Select DNA data using `grep()`
+comm = comm[grep("*-DNA", rownames(comm)), ]
 
+# Perform replacement of all matches with `gsub()`
+rownames(comm) = gsub("\\-DNA", "", rownames(comm)) 
+rownames(comm) = gsub("\\_", "", rownames(comm))
 
+# 4. rename the sites by removing extra characters
+comm = comm[rownames(comm) %in% env$Sample_ID, ]
 
+# 5. Remove zero-abundance OTUs from data set
+comm = comm[ , colSums(comm) > 0]
 
-
+# 6. load the taxonomic data using the `read.tax()` function from the source-code file.
+tax = read.tax(taxonomy = "./data/INPonds.final.rdp.1.cons.taxonomy")
 ```
 
 Next, in the R code chunk below, do the following:  
@@ -91,15 +113,40 @@ Next, in the R code chunk below, do the following:
 9. plot the rooted tree.
 
 ```{r}
+# 1. load the FASTA alignment for the bacterial operational taxonomic units (OTUs)
+ponds.cons = read.alignment(file = "./data/INPonds.final.rdp.1.rep.fasta", format = "fasta")
 
+# 2. rename the OTUs by removing everything before the tab (\\t) and after the bar (|),
+ponds.cons$nam =  gsub("\\|.*$", "", gsub("^.*?\t", "", ponds.cons$nam))
 
+# 3. import the *Methanosarcina* outgroup FASTA file
+outgroup = read.alignment(file = "./data/methanosarcina.fasta", format = "fasta")
 
+# 4. convert both FASTA files into the DNAbin format and combine using `rbind()`
+DNAbin = rbind(as.DNAbin(outgroup), as.DNAbin(ponds.cons))
 
+# 5. visualize the sequence alignment
+image.DNAbin(DNAbin, show.labels=T, cex.lab = 0.05, las = 1)
 
+# 6. using the alignment (with outgroup), pick a DNA substitution model, and create a phylogenetic distance matrix (`ape`)
+seq.dist.jc = dist.dna(DNAbin, model = "JC", pairwise.deletion = FALSE)
 
+# 7. using the distance matrix above, make a neighbor joining tree
+phy.all = bionj(seq.dist.jc)
 
+# 8. remove any tips (OTUs) that are not in the community data set
+phy = drop.tip(phy.all, phy.all$tip.label[!phy.all$tip.label %in% c(colnames(comm), "Methanosarcina")])
 
+# Id the outgroup
+outgroup = match("Methanosarcina", phy$tip.label)
 
+# Root the Tree {ape}
+phy = root(phy, outgroup, resolve.root = TRUE)
+
+# 9. plot the rooted tree
+par(mar = c(1, 1, 2, 1) + 0.1)
+plot.phylo(phy, main = "Neighbor Joining Tree", "phylogram", show.tip.label = FALSE,
+           use.edge.length = FALSE, direction = "right", cex = 0.6, label.offset = 1)
 ```
 
 ## 4) PHYLOGENETIC ALPHA DIVERSITY
@@ -109,8 +156,8 @@ In the R code chunk below, do the following:
 1. calculate Faith's D using the `pd()` function.
 
 ```{r}
-
-
+# Calculate PD and S {picante}
+pd = pd(comm, phy, include.root = FALSE)
 ```
 
 In the R code chunk below, do the following:  
@@ -119,10 +166,20 @@ In the R code chunk below, do the following:
 3. calculate the scaling exponent. 
 
 ```{r}
+# Biplot of S and PD
+par(mar = c(5, 5, 4, 1) + 0.1)
+plot(log(pd$S), log(pd$PD), pch = 20, col = "red", las = 1,
+xlab = "ln(S)", ylab = "ln(PD)", cex.main = 1, main="Phylodiversity (PD) vs. Taxonomic richness (S)")
 
+# Test of power-law relationship
+# 2. add the trend line
+fit = lm('log(pd$PD) ~ log(pd$S)')
+abline(fit, col = "red", lw = 2)
 
-
-
+# 3. calculate the scaling exponent. 
+exponent = round(coefficients(fit)[2], 2)
+legend("topleft", legend=paste("Scaling exponent = ", exponent, sep = ""),
+       bty = "n", lw = 2, col = "red")
 
 ```
 
@@ -143,10 +200,18 @@ In the R code chunk below, do the following:
 1. estimate the standardized effect size of PD using the `richness` randomization method.  
 
 ```{r}
+# 1. estimate the standardized effect size of PD using the `richness` randomization method. 
+ses.pd = ses.pd(comm[1:2,], phy, null.model = "richness", runs = 25, include.root = FALSE)
+# Richness null model - Randomize community data matrix abundances within samples (maintains sample species richness)
 
+# Using 2 other null models 
+# Frequncy 
+#Randomize community data matrix abundances within species (maintains species occurence frequency)
+ses.pd_f = ses.pd(comm[1:2,], phy, null.model = "frequency", runs = 25, include.root = FALSE)
 
-
-
+# independentswap
+# Randomize community data matrix with the independent swap algorithm (Gotelli 2000) maintaining species occurrence frequency and sample species richness
+ses.pd_is = ses.pd(comm[1:2,], phy, null.model = "independentswap", runs = 25, include.root = FALSE)
 ```
 
 ***Question 2***: Using `help()` and the table above, run the `ses.pd()` function using two other null models and answer the following questions:
@@ -166,8 +231,8 @@ In the R code chunk below, do the following:
 1. calculate the phylogenetic resemblance matrix for taxa in the Indiana ponds data set.
 
 ```{r}
-
-
+# 1. calculate the phylogenetic resemblance matrix for taxa in the Indiana ponds data set.
+phydist = cophenetic.phylo(phy)
 ```
 
 **ii.  Net Relatedness Index (NRI)**
@@ -176,12 +241,14 @@ In the R code chunk below, do the following:
 1. Calculate the NRI for each site in the Indiana ponds data set. 
 
 ```{r}
+# 1. Calculate the NRI for each site in the Indiana ponds data set. 
+# Estimate standardized effect size of NRI via randomization (`picante`)
+ses.mpd = ses.mpd(comm, phydist, null.model = "taxa.labels", abundance.weighted = FALSE, runs = 25)
 
-
-
-
-
-
+# Calculate NRI
+NRI = as.matrix(-1 * ((ses.mpd[,2] - ses.mpd[,3]) / ses.mpd[,4])) 
+rownames(NRI) = row.names(ses.mpd)
+colnames(NRI) = "NRI"
 ```
 
 **iii.  Nearest Taxon Index (NTI)**
@@ -190,9 +257,12 @@ In the R code chunk below, do the following:
 1. Calculate the NTI for each site in the Indiana ponds data set. 
 
 ```{r}
-
-
-
+# Estimate Standardized Effect Size of NRI via Randomization {picante}
+ses.mntd = ses.mntd(comm, phydist, null.model = "taxa.labels", abundance.weighted = FALSE, runs = 25)
+# Calculate NTI
+NTI = as.matrix(-1 * ((ses.mntd[,2] - ses.mntd[,3]) / ses.mntd[,4]))
+rownames(NTI) = row.names(ses.mntd) 
+colnames(NTI) = "NTI"
 ```
 
 ***Question 3***: 
@@ -217,21 +287,24 @@ In the R code chunk below, do the following:
 2. calculate the phylogenetically based community resemblance matrix using UniFrac distance.
 
 ```{r}
+# 1. calculate the phylogenetically based community resemblance matrix using Mean Pair Distance
+# Mean Pairwise Distance
+dist.mp = comdist(comm, phydist)
 
-
-
-
+# 2. calculate the phylogenetically based community resemblance matrix using UniFrac distance.
+# UniFrac Distance (Note: this takes a few minutes; be patient)
+dist.uf = unifrac(comm, phy)
 ```
 
 In the R code chunk below, do the following:  
 1. plot Mean Pair Distance versus UniFrac distance and compare.
 
 ```{r}
-
-
-
-
-
+# 1. plot Mean Pair Distance versus UniFrac distance and compare.
+par(mar = c(5, 5, 2, 1) + 0.1) 
+plot(dist.mp, dist.uf, pch = 20, col = "red", las = 1, asp = 1, xlim = c(0.15, 0.5), ylim = c(0.15, 0.5), xlab = "Mean Pair Distance", ylab = "UniFrac Distance") 
+abline(b = 1, a = 0, lty = 2)
+text(0.5, 0.47, "1:1")
 ```
 
 ***Question 4***: 
@@ -255,12 +328,14 @@ In the R code chunk below, do the following:
 2. calculate the explained variation for the first three PCoA axes.
 
 ```{r}
+# 1. perform a PCoA based on the UniFrac distances
+pond.pcoa = cmdscale(dist.uf, eig = T, k = 3)
 
-
-
-
-
-
+# 2. calculate the explained variation for the first three PCoA axes
+explainvar1 = round(pond.pcoa$eig[1] / sum(pond.pcoa$eig), 3) * 100 
+explainvar2 = round(pond.pcoa$eig[2] / sum(pond.pcoa$eig), 3) * 100 
+explainvar3 = round(pond.pcoa$eig[3] / sum(pond.pcoa$eig), 3) * 100 
+sum.eig = sum(explainvar1, explainvar2, explainvar3)
 ```
 
 Now that we have calculated our PCoA, we can plot the results.
@@ -272,18 +347,21 @@ In the R code chunk below, do the following:
 4. customize the plot. 
 
 ```{r}
+# Define Plot Parameters
+par(mar = c(5, 5, 1, 2) + 0.1)
 
+# 1. plot the PCoA results
+plot(pond.pcoa$points[ ,1], pond.pcoa$points[ ,2], xlim = c(-0.2, 0.2), ylim = c(-.16, 0.16),
+xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""), ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""), pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
 
-
-
-
-
-
-
-
-
-
-
+# 2. Add Axes
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1) 
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1) 
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+# 3. Add Points & Labels
+points(pond.pcoa$points[ ,1], pond.pcoa$points[ ,2], pch = 19, cex = 3, bg = "gray", col = "gray")
+text(pond.pcoa$points[ ,1], pond.pcoa$points[ ,2], labels = row.names(pond.pcoa$points))
 ```
 
 In the following R code chunk:
@@ -302,8 +380,12 @@ In the R code chunk below, do the following:
 1. test the hypothesis that watershed has an effect on the phylogenetic diversity of bacterial communities.
 
 ```{r}
-
-
+# Define environmental variables
+envs = env[, 5:19]
+# Remove redudnant variables
+envs = envs[, -which(names(envs) %in% c("TDS", "Salinity", "Cal_Volume"))]
+# Create distance matrix for environmental variables
+env.dist = vegdist(scale(envs), method = "euclid")
 
 
 
