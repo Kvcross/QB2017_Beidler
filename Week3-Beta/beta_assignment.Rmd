@@ -682,10 +682,18 @@ ant_07_sbys = ant_07[ ,4:18]
 ant_08_sbys = ant_08[ ,4:18]
 ant_09_sbys = ant_09[ ,4:18]
 
+# Removing columns 
+ant_06_sbys = ant_06_sbys[, !apply(ant_06_sbys == 0, 2, all)]
+ant_06_sbys = rowSums(ant_06_sbys == 0) != ncol(ant_06_sbys)
+
+ant_07_sbys = ant_07_sbys[, !apply(ant_07_sbys == 0, 2, all)]
+ant_08_sbys = ant_08_sbys[, !apply(ant_08_sbys == 0, 2, all)]
+ant_09_sbys = ant_09_sbys[, !apply(ant_09_sbys == 0, 2, all)]
+
 # Ordination
 
 # construct a resemblance matrix based on Bray-Curtis Distance ("plant_2006.db") for 2006
-ant_06.db = vegdist(ant_06_sbys, method = "bray", upper = TRUE, diag = TRUE)
+ant_06.db = vegdist(ant_06_sbys, method = "bray")
 # Perform a Principal Coordinates Analysis to visualize beta-diversity
 ant_06.pcoa = cmdscale(ant_06.db, eig = TRUE, k = 3)
 

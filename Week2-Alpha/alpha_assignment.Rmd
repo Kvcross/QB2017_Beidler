@@ -2,7 +2,7 @@
 title: 'Assignment: Local (alpha) Diversity'
 author: 'Katie Beidler; Z620: Quantitative Biodiversity, Indiana University'
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:  html_document
+output: pdf_document
 geometry: margin=2.54cm
 ---
 
@@ -34,7 +34,7 @@ In the R code chunk below, please provide the code to:
 3) Set your working directory to your `/Week2-Alpha` folder, and
 4) Load the `vegan` R package (be sure to install if needed).
 
-```{r}
+```{r,  warning=FALSE}
 rm(list=ls())
 getwd()
 setwd("/Users/bhbeidler/GitHub/QB2017_Beidler/Week2-Alpha")
